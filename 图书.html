@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		p,h6{
+			margin:0;
+			padding: 0;
+		}
+		#list li{
+			width: 200px;height:250px;
+			float: left;
+			margin:8px;
+			cursor: pointer;
+			position: relative;
+		}
+		#list li img{
+			width: 100%;
+			height:80%;
+		}
+		#list{
+			width:1000px;
+			position: relative;
+			list-style: none;
+			padding: 0;
+			margin: 0 auto;
+			margin-left: 50px;
+		}
+		#p1{
+			width: 1000px;
+			margin: 10px auto;padding-left: 10px;
+			margin-left: 50px;
+		}
+		#box li p{
+			font-size: 14px;
+			overflow: hidden;
+			text-overflow:ellipsis;
+			white-space: nowrap;
+			margin-top: 5px;
+		}
+		#content{
+			position: absolute;
+			left:200px;
+			top:0;
+			width: 300px;
+			min-height:100px;
+			z-index: 9090;
+			background: white;
+			border:1px solid #ccc;
+			font-size: 12px;
+			padding: 10px;
+			display: none;
+		}
+		#content h6{
+			font-weight: normal;
+			text-indent: 2em;
+			margin-top: 10px;
+			width:300px;
+			word-break:break-all;
+			display:-webkit-box;
+			-webkit-line-clamp:8;
+			-webkit-box-orient:vertical;
+			overflow:hidden;
+		}
+		#box{
+			width: 1000px;
+			background: white;
+			box-shadow: 0px 0px 20px #000;
+			position: absolute;
+			left: 50%;
+			margin-left: -500px;
+		}
+	</style>
+</head>
+<body>
+	<div id="box">
+		<p id="p1">
+			<input type="text" id="text">
+			<input type="button" value="加载" id="btn">
+		</p>
+		<ul id="list"></ul>
+	</div>
+</body>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+	$("#btn").click(function(){
+		
+		Ajax();
+	})
+	
+	function Ajax(){
+		$.ajax({
+			url:"https://api.douban.com/v2/book/search?q="+text.value,
+			method:"GET",
+			dataType:'jsonp',
+			success:function(data){
+				var str = "";
+				var str1 = "";
+				console.log(data.books[0]);
+				for (var i = 0; i < data.books.length; i++) {
+					str += "<li><img src='"+data.books[i].image+"'><p>"+data.books[i].title+"</p><p>"+data.books[i].author+"</p><div id='content'><p>"+data.books[i].title+"-"+data.books[i].subtitle+"</p><p>"+data.books[i].author+"/"+data.books[i].pubdate+"/"+data.books[i].publisher+"</p><h6>"+data.books[i].summary+"</h6></div></li>";
+				}	
+				list.innerHTML = str;
+
+				console.log($('li')[0]);
+				$('li').mouseover(function(){
+					$(this).children().last().show();
+				});
+				$('li').mouseout(function(){
+					$(this).children().last().hide();
+				});
+
+				$('li').click(function(){
+					console.log($(this).index());
+					window.open("https://book.douban.com/subject/"+data.books[$(this).index()].id+"/?icn=index-editionrecommend","blank");
+				})
+			}
+		})
+	}
+	
+</script>
+</html>
